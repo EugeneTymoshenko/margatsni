@@ -1,0 +1,16 @@
+default: &default
+  adapter: postgresql
+  host: <%= ENV['DB_HOST'] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  database: <%= ENV['PG_DB'] %>
+  username: <%= ENV['PG_USER'] %>
+  password: <%= ENV['PASSWORD'] %>
+development:
+  <<: *default
+test:
+  <<: *default
+  database: <%= ENV['TEST_PG_DB'] %>
+production:
+  <<: *default
+
