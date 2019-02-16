@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Margatsni
   module V1
     module Entities

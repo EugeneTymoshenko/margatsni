@@ -1,5 +1,6 @@
-require_relative 'boot'
+# frozen_string_literal: true
 
+require_relative 'boot'
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
@@ -10,6 +11,5 @@ module Margatsni
 
     config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
     config.autoload_paths += Dir[Rails.root.join('app', 'api', '*')]
-
   end
 end

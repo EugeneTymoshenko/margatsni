@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 GrapeSwaggerRails.options.api_key_name = 'Authentication-Token'
 GrapeSwaggerRails.options.api_key_type = 'header'
 GrapeSwaggerRails.options.url          = '/api/v1/swagger_doc'

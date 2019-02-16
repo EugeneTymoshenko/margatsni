@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Margatsni
   module V1
     module Users
@@ -23,16 +25,14 @@ module Margatsni
 
           desc 'user login'
           params do
-            requires :email
-            requires :password
+            requires :email, type: String, regexp: /\A[^@\s]+@[^@\s]+\z/
+            requires :password, type: String
           end
           post :login do
-            user = User.find_by(email: params[:email])
-            if user = User.authenticate(params[:email], params[:password])
-              represent_user_with_token(user)
-            else
-              error!('Invalid email/password combination', 401)
-            end
+            user = User.authenticate(params[:email], params[:password])
+            error!('Invalid email/password combination', 401) unless user
+
+            represent_user_with_token(user)
           end
         end
       end
