@@ -14,7 +14,7 @@ module Margatsni
           desc 'register a user'
           params do
             requires :username, type: String
-            requires :email, type: String, regexp: /\A[^@\s]+@[^@\s]+\z/
+            requires :email, type: String, regexp: User::EMAIL_REGEXP
             requires :password, type: String
           end
           post :registration do
@@ -25,7 +25,7 @@ module Margatsni
 
           desc 'user login'
           params do
-            requires :email, type: String, regexp: /\A[^@\s]+@[^@\s]+\z/
+            requires :email, type: String, regexp: User::EMAIL_REGEXP
             requires :password, type: String
           end
           post :login do
