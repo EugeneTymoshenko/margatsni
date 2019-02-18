@@ -2,7 +2,7 @@
 
 module Margatsni
   module V1
-    module Users
+    module Endpoints
       class Users < Margatsni::V1::BaseV1
         helpers do
           def represent_user_with_token(user)
