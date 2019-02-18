@@ -2,7 +2,7 @@
 
 module Margatsni
   module V1
-    module Users
+    module Helpers
       module Auth
         def validate_token!
           TokenProvider.valid?(token)

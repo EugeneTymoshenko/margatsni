@@ -19,7 +19,8 @@ module Margatsni
           end
           post :registration do
             user = User.new(declared(params))
-            user.save!
+            error!('Username or email already exists!', 400) unless user.save
+
             represent_user_with_token(user)
           end
 
