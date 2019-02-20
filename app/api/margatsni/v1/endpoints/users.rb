@@ -6,7 +6,8 @@ module Margatsni
       class Users < Margatsni::V1::BaseV1
         helpers do
           def represent_user_with_token(user)
-            present user, with: Margatsni::V1::Entities::User
+            present :token, ::TokenProvider.issue_token(user_id: user.id)
+            present :user, user, with: Margatsni::V1::Entities::User
           end
         end
 
@@ -19,7 +20,7 @@ module Margatsni
           end
           post :registration do
             user = User.new(declared(params))
-            error!('Username or email already exists!', 400) unless user.save
+            error!('Username or email already taken!', 406) unless user.save
 
             represent_user_with_token(user)
           end
