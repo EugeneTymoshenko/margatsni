@@ -4,32 +4,35 @@ module Margatsni
   module V1
     module Helpers
       module Auth
-        def validate_token!
-          TokenProvider.valid?(token)
-        rescue JWT::VerificationError, JWT::DecodeError
-          error!('Unauthorized', 401)
-        end
-
-        def authenticate_request!
-          payload, _header = validate_token!
-          @current_user = User.find_by(id: payload['user_id'])
-        # rescue
-        #   error!('Unauthorized', 401)
+        def current_user
+          @current_user ||= authenticate_request!
         end
 
         def authenticate_user!
           user = User.authenticate(params[:email], params[:password])
           return error!('Unauthorized', 401) unless user
 
-          present :token, ::TokenProvider.issue_token(user_id: user.id)
+          user
         end
 
-        def current_user
-          @current_user ||= authenticate_user!
+        private
+
+        def authenticate_request!
+          payload, _header = validate_token!
+          @current_user = User.find_by(id: payload['user_id'])
+          error!('No such user', 401) unless @current_user
+
+          @current_user
+        end
+
+        def validate_token!
+          TokenProvider.valid?(token)
+        rescue JWT::VerificationError, JWT::DecodeError
+          error!('Invalid token', 401)
         end
 
         def token
-          request.headers['Authorization'].split(' ').last
+          request.headers['Authorization']&.split(' ')&.last
         end
       end
     end

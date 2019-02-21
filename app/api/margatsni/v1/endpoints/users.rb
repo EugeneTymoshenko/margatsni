@@ -31,7 +31,7 @@ module Margatsni
             requires :password, type: String
           end
           post :login do
-            user = User.authenticate(params[:email], params[:password])
+            user = authenticate_user!
             error!('Invalid email/password combination', 401) unless user
 
             represent_user_with_token(user)
