@@ -10,10 +10,63 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_15_150718) do
+ActiveRecord::Schema.define(version: 2019_02_22_173654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "comments", force: :cascade do |t|
+    t.string "entity_type"
+    t.bigint "entity_id"
+    t.bigint "user_id"
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_type", "entity_id"], name: "index_comments_on_entity_type_and_entity_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "follower_users", force: :cascade do |t|
+    t.bigint "follower_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["follower_id"], name: "index_follower_users_on_follower_id"
+    t.index ["user_id"], name: "index_follower_users_on_user_id"
+  end
+
+  create_table "images", force: :cascade do |t|
+    t.string "entity_type"
+    t.bigint "entity_id"
+    t.string "file_data", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_type", "entity_id"], name: "index_images_on_entity_type_and_entity_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.string "entity_type"
+    t.bigint "entity_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["entity_type", "entity_id"], name: "index_likes_on_entity_type_and_entity_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "username"
@@ -22,7 +75,15 @@ ActiveRecord::Schema.define(version: 2019_02_15_150718) do
     t.string "salt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "role_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["role_id"], name: "index_users_on_role_id"
   end
 
+  add_foreign_key "comments", "users"
+  add_foreign_key "follower_users", "users"
+  add_foreign_key "follower_users", "users", column: "follower_id"
+  add_foreign_key "likes", "users"
+  add_foreign_key "posts", "users"
+  add_foreign_key "users", "roles"
 end
