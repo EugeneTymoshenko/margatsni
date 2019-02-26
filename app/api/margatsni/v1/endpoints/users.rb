@@ -14,11 +14,11 @@ module Margatsni
         namespace :users do
           desc 'register a user'
           params do
-            requires :username, type: String
+            requires :username, type: String, allow_blank: false
             requires :email, type: String, regexp: User::EMAIL_REGEXP
-            requires :password, type: String
+            requires :password, type: String, allow_blank: false
           end
-          post :registration do
+          post do
             user = User.new(declared(params))
             error!('Username or email already taken!', 406) unless user.save
 
@@ -28,7 +28,7 @@ module Margatsni
           desc 'user login'
           params do
             requires :email, type: String, regexp: User::EMAIL_REGEXP
-            requires :password, type: String
+            requires :password, type: String, allow_blank: false
           end
           post :login do
             user = authenticate_user!
