@@ -3,9 +3,10 @@ class User < ApplicationRecord
   EMAIL_REGEXP = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/.freeze
 
   has_one :role, dependent: :destroy
+
+  has_many :images, as: :imageable, dependent: :destroy
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
-  has_many :images, as: :imageable, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :follower_users, dependent: :destroy
 
