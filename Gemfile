@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'coffee-rails', '~> 4.2'
@@ -21,6 +20,9 @@ gem 'sass-rails', '~> 5.0'
 gem 'sorcery'
 gem 'turbolinks', '~> 5'
 gem 'uglifier', '>= 1.3.0'
+gem 'pundit'
+gem 'enumerize'
+gem 'trestle'
 
 group :development do
   gem 'annotate'
