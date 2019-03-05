@@ -12,7 +12,6 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
-.DS_Store
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
@@ -28,3 +27,5 @@
 
 .env
 .idea/
+
+.DS_Store
