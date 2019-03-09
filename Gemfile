@@ -23,6 +23,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'pundit'
 gem 'enumerize'
 gem 'trestle'
+gem 'kaminari'
 
 group :development do
   gem 'annotate'
