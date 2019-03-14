@@ -24,6 +24,8 @@ gem 'pundit'
 gem 'enumerize'
 gem 'trestle'
 gem 'kaminari'
+gem 'carrierwave', '~> 1.0'
+gem 'carrierwave-dropbox'
 
 group :development do
   gem 'annotate'
