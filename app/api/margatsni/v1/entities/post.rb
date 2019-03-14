@@ -10,6 +10,9 @@ module Margatsni
 
         expose :id
         expose :body
+        expose :image do |instance|
+          instance.image.file_data_url
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(instance.user, except: %i[email])
         end

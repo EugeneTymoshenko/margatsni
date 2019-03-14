@@ -8,6 +8,15 @@ module Margatsni
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
           end
+
+          def new_post_attributes
+            {
+              body: params[:body],
+              image_attributes: {
+                file_data: ActionDispatch::Http::UploadedFile.new(params[:image])
+              }
+            }
+          end
         end
 
         namespace :posts do
@@ -18,6 +27,7 @@ module Margatsni
           end
           get do
             posts = Post.all.page(params[:page]).per(params[:per_page])
+
             present :page, posts.current_page
             present :per_page, posts.current_per_page
             present :posts, posts, with: Margatsni::V1::Entities::Post
@@ -42,11 +52,13 @@ module Margatsni
           desc 'Create new post'
           params do
             requires :body, type: String, length: 500
+            requires :image, type: Rack::Multipart::UploadedFile
           end
           post :new do
-            post = current_user.posts.create(declared(params))
+            post = current_user.posts.new(new_post_attributes)
+            post.save
 
-            represent_post(post)
+            represent_post(post.reload)
           end
 
           desc 'Update a post'
