@@ -3,21 +3,13 @@
 module Margatsni
   module V1
     module Entities
-      class Post < Grape::Entity
+      class Comment < Grape::Entity
         format_with(:european_timestamp) do |date|
           date.strftime('%d.%m.%y %H:%M')
         end
 
         expose :id
         expose :body
-        expose :image do |instance|
-          instance.image&.file_data_url
-        rescue Dropbox::ApiError
-          nil
-        end
-        expose :comments do |instance|
-          Margatsni::V1::Entities::Comment.represent(instance.comments.last(5))
-        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(instance.user, except: %i[email])
         end
