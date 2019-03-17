@@ -23,6 +23,9 @@ gem 'uglifier', '>= 1.3.0'
 gem 'pundit'
 gem 'enumerize'
 gem 'trestle'
+gem 'mini_racer'
+gem 'trestle-auth'
+gem 'trestle-search'
 
 group :development do
   gem 'annotate'

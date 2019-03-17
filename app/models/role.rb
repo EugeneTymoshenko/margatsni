@@ -3,5 +3,5 @@ class Role < ApplicationRecord
 
   belongs_to :user
 
-  enumerize :name, %i[admin member], default: :member
+  enumerize :name, in: %i[admin member], default: :member
 end
