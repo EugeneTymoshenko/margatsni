@@ -11,12 +11,10 @@ module Margatsni
         expose :id
         expose :body
         expose :image do |instance|
-          instance.image&.file_data_url
-        rescue Dropbox::ApiError
-          nil
+          instance.image.file_data_url
         end
         expose :comments do |instance|
-          Margatsni::V1::Entities::Comment.represent(instance.comments.last(5))
+          Margatsni::V1::Entities::Comment.represent(instance.comments.last(3))
         end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(instance.user, except: %i[email])
