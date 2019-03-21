@@ -9,6 +9,10 @@ module Margatsni
             present :token, ::TokenProvider.issue_token(user_id: user.id)
             present :user, user, with: Margatsni::V1::Entities::User
           end
+
+          def represent_current_user(current_user)
+            present :user, current_user, with: Margatsni::V1::Entities::User
+          end
         end
 
         namespace :users do
@@ -35,6 +39,26 @@ module Margatsni
             error!('Invalid email/password combination', 401) unless user
 
             represent_user_with_token(user)
+          end
+
+          namespace :me do
+            desc 'profile'
+            get do
+              represent_current_user(current_user)
+            end
+
+            desc 'edit user'
+            params do
+              requires :username, type: String, allow_blank: false
+              requires :email, type: String, regexp: User::EMAIL_REGEXP
+              requires :password, type: String, allow_blank: false
+              requires :bio, type: String, allow_blank: true
+            end
+            put do
+              current_user.update(declared(params))
+
+              represent_current_user(current_user)
+            end
           end
         end
       end

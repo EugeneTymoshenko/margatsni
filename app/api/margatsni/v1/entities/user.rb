@@ -7,6 +7,7 @@ module Margatsni
         expose :id
         expose :username
         expose :email
+        expose :bio
       end
     end
   end
