@@ -24,10 +24,7 @@ module Margatsni
           end
 
           desc 'Return a specific post'
-          params do
-            requires :id, type: Integer, allow_blank: false
-          end
-          get :id do
+          get ':id' do
             post = Post.find(params[:id])
 
             represent_post(post)
@@ -36,41 +33,39 @@ module Margatsni
           end
 
           before do
-            current_user
+            authenticate_request!
           end
 
           desc 'Create new post'
           params do
             requires :body, type: String, length: 500
           end
-          post :new do
+          post do
             post = current_user.posts.create(declared(params))
 
             represent_post(post)
           end
 
-          desc 'Update a post'
-          params do
-            requires :id, type: Integer
-            requires :body, type: String, length: 500
-          end
-          put :id do
-            post = current_user.posts.find(params[:id])
-            post.update(body: params[:body])
+          route_param :id do
+            desc 'Update a post'
+            params do
+              requires :body, type: String, length: 500
+            end
+            put do
+              post = current_user.posts.find(params[:id])
+              post.update(declared(params))
 
-            represent_post(post)
-          rescue ActiveRecord::RecordNotFound
-            error!('Post not found!', 404)
-          end
+              represent_post(post)
+            rescue ActiveRecord::RecordNotFound
+              error!('Post not found!', 404)
+            end
 
-          desc 'Delete a post'
-          params do
-            requires :id, type: Integer, allow_blank: false
-          end
-          delete :id do
-            present :status, !current_user.posts.find(params[:id]).destroy.nil?
-          rescue ActiveRecord::RecordNotFound
-            error!('Post not found!', 404)
+            desc 'Delete a post'
+            delete do
+              present :status, !current_user.posts.find(params[:id]).destroy.nil?
+            rescue ActiveRecord::RecordNotFound
+              error!('Post not found!', 404)
+            end
           end
         end
       end
