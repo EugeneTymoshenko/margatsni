@@ -49,10 +49,10 @@ module Margatsni
 
             desc 'edit user'
             params do
-              requires :username, type: String, allow_blank: false
-              requires :email, type: String, regexp: User::EMAIL_REGEXP
-              requires :password, type: String, allow_blank: false
-              requires :bio, type: String, allow_blank: true
+              optional :username, type: String, allow_blank: false
+              optional :email, type: String, regexp: User::EMAIL_REGEXP
+              optional :password, type: String, allow_blank: false
+              optional :bio, type: String
             end
             put do
               current_user.update(declared(params))
