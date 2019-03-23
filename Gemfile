@@ -26,6 +26,7 @@ gem 'trestle'
 gem 'mini_racer'
 gem 'trestle-auth'
 gem 'trestle-search'
+gem 'kaminari'
 
 group :development do
   gem 'annotate'
