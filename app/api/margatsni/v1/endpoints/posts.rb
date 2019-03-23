@@ -8,15 +8,6 @@ module Margatsni
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
           end
-
-          def new_post_attributes
-            {
-              body: params[:body],
-              image_attributes: {
-                file_data: ActionDispatch::Http::UploadedFile.new(params[:image])
-              }
-            }
-          end
         end
 
         namespace :posts do
@@ -49,10 +40,12 @@ module Margatsni
           desc 'Create new post'
           params do
             requires :body, type: String, length: 500
-            requires :image, type: Rack::Multipart::UploadedFile
+            requires :image_attributes, type: Hash do
+              requires :file_data, type: File, allow_blank: false
+            end
           end
-          post :new do
-            post = current_user.posts.new(new_post_attributes)
+          post do
+            post = current_user.posts.build(declared(params, include_missing: false))
             post.save
 
             represent_post(post.reload)
