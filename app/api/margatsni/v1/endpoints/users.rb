@@ -42,6 +42,10 @@ module Margatsni
           end
 
           namespace :me do
+            before do
+              authenticate_request!
+            end
+
             desc 'profile'
             get do
               represent_current_user(current_user)
