@@ -1,2 +1,9 @@
 en:
-  length_error: 'must be at the most %{option} characters long'
+  activerecord:
+    attributes:
+      image:
+        file_data: 'Image'
+  errors:
+    messages:
+      max_size_error: 'size should be less than %{max_size}'
+      length_error: 'must be at the most %{option} characters long'

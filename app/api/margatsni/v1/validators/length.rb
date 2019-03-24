@@ -8,7 +8,7 @@ module Margatsni
           return if params[attr_name] && params[attr_name].length <= @option
 
           raise Grape::Exceptions::Validation, params: [@scope.full_name(attr_name)],
-                                               message: I18n.t(:length_error, option: @option)
+                                               message: I18n.t('errors.messages.length_error', option: @option)
         end
       end
     end
