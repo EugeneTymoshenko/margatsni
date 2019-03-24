@@ -18,6 +18,7 @@ module Margatsni
           end
           get do
             posts = Post.all.page(params[:page]).per(params[:per_page])
+
             present :page, posts.current_page
             present :per_page, posts.current_per_page
             present :posts, posts, with: Margatsni::V1::Entities::Post
@@ -39,11 +40,15 @@ module Margatsni
           desc 'Create new post'
           params do
             requires :body, type: String, length: 500
+            requires :image_attributes, type: Hash do
+              requires :file_data, type: File, allow_blank: false
+            end
           end
           post do
-            post = current_user.posts.create(declared(params))
+            post = current_user.posts.build(declared(params, include_missing: false))
+            error!(post.errors.full_messages, 422) unless post.save
 
-            represent_post(post)
+            represent_post(post.reload)
           end
 
           route_param :id do
