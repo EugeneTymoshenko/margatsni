@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'grape-swagger'
-Margatsni::V1::Validators::Length
+require_relative './validators/length'
 
 module Margatsni
   module V1

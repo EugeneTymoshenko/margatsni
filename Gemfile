@@ -26,6 +26,9 @@ gem 'trestle'
 gem 'kaminari'
 gem 'carrierwave', '~> 1.0'
 gem 'carrierwave-dropbox'
+gem 'mini_racer'
+gem 'trestle-auth'
+gem 'trestle-search'
 
 group :development do
   gem 'annotate'

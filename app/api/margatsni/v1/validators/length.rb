@@ -5,10 +5,10 @@ module Margatsni
     module Validators
       class Length < Grape::Validations::Base
         def validate_param!(attr_name, params)
-          unless params[attr_name].length <= @option
-            raise Grape::Exceptions::Validation, params: [@scope.full_name(attr_name)],
-                                                 message: "must be at the most #{@option} characters long"
-          end
+          return if params[attr_name] && params[attr_name].length <= @option
+
+          raise Grape::Exceptions::Validation, params: [@scope.full_name(attr_name)],
+                                               message: I18n.t('errors.messages.length_error', option: @option)
         end
       end
     end
