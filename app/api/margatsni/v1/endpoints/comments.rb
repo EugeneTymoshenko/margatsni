@@ -14,8 +14,9 @@ module Margatsni
             @post || error!('Post not found', 404)
           end
 
-          def comment
-            @comment ||= Comment.find_by(user_id: current_user.id, id: params[:comment_id])
+          def comment(scope = {})
+            scope[:id] = params[:comment_id]
+            @comment ||= Comment.find_by(scope)
             @comment || error!('Comment not found', 404)
           end
         end
@@ -28,41 +29,37 @@ module Margatsni
             end
 
             before do
-              current_user
+              authenticate_request!
             end
 
             desc 'Create a comment'
             params do
               requires :body, type: String, allow_blank: false
-              optional :comment_id, type: Integer
+              optional :comment_id, type: Integer, allow_blank: false
             end
             post do
               owner = params[:comment_id] ? comment : post
-              comment = owner.comments.new(body: params[:body], user_id: current_user.id)
-              if comment.save
-                represent_comment(comment)
-              else
-                present :errors, comment.errors.full_messages
-              end
-            end
-
-            desc 'Update a comment'
-            params do
-              requires :comment_id, type: Integer, allow_blank: false
-              requires :body, type: String, allow_blank: false, length: 200
-            end
-            put :id do
-              error!('error!', 403) unless comment.update(body: params[:body])
+              comment = owner.comments.build(body: params[:body], user_id: current_user.id)
+              error!(comment.errors.full_messages) unless comment.save
 
               represent_comment(comment)
             end
 
-            desc 'Delete a comment'
-            params do
-              requires :comment_id, type: Integer, allow_blank: false
-            end
-            delete :id do
-              present :status, comment.destroy.present?
+            route_param :comment_id do
+              desc 'Update a comment'
+              params do
+                requires :body, type: String, allow_blank: false, length: 200
+              end
+              put do
+                comment(user_id: current_user.id).update(declared(params))
+
+                represent_comment(comment)
+              end
+
+              desc 'Delete a comment'
+              delete do
+                present :status, comment(user_id: current_user.id).destroy.present?
+              end
             end
           end
         end
