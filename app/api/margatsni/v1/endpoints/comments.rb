@@ -4,6 +4,8 @@ module Margatsni
   module V1
     module Endpoints
       class Comments < Margatsni::V1::BaseV1
+        mount Likes, with: { likeable: 'comments' }
+
         helpers do
           def represent_comment(comment)
             present :comment, comment, with: Margatsni::V1::Entities::Comment

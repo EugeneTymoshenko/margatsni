@@ -10,6 +10,9 @@ module Margatsni
 
         expose :id
         expose :body
+        expose :likes_count do |instance|
+          instance.likes.count
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(instance.user, except: %i[email bio])
         end
