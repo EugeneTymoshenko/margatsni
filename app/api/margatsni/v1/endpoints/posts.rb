@@ -17,7 +17,7 @@ module Margatsni
             optional :per_page, type: Integer
           end
           get do
-            posts = Post.all.page(params[:page]).per(params[:per_page])
+            posts = Post.all.order(id: :desc).page(params[:page]).per(params[:per_page])
 
             present :page, posts.current_page
             present :per_page, posts.current_per_page
