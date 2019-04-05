@@ -10,9 +10,9 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :follower_users, dependent: :destroy
 
-  validates :username, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }, on: :create
-  validates :email, uniqueness: true, format: { with: EMAIL_REGEXP,
+  validates :email, uniqueness: { case_sensitive: false }, format: { with: EMAIL_REGEXP,
                                                 message: 'is invalid' }
 
   before_create :build_role, on: :create, unless: :role
