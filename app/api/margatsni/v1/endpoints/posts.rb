@@ -8,6 +8,17 @@ module Margatsni
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
           end
+
+          def represent_posts(posts)
+            present :page, posts.current_page
+            present :per_page, posts.current_per_page
+            present :posts, posts, with: Margatsni::V1::Entities::Post
+          end
+
+          def user
+            user ||= User.find_by(username: params[:username])
+            user || error!('User not found!', 404)
+          end
         end
 
         namespace :posts do
@@ -19,9 +30,30 @@ module Margatsni
           get do
             posts = Post.all.order(id: :desc).page(params[:page]).per(params[:per_page])
 
-            present :page, posts.current_page
-            present :per_page, posts.current_per_page
-            present :posts, posts, with: Margatsni::V1::Entities::Post
+            represent_posts(posts)
+          end
+
+          desc 'Return list of posts for current user'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+          end
+          get :me do
+            authenticate_request!
+            posts = current_user.posts.order(id: :desc).page(params[:page]).per(params[:per_page])
+
+            represent_posts(posts)
+          end
+
+          desc 'Return list of posts for specific user'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+          end
+          get 'user/:username' do
+            posts = user.posts.order(id: :desc).page(params[:page]).per(params[:per_page])
+
+            represent_posts(posts)
           end
 
           desc 'Return a specific post'
