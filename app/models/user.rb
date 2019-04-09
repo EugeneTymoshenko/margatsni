@@ -3,8 +3,8 @@ class User < ApplicationRecord
   EMAIL_REGEXP = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/.freeze
 
   has_one :role, dependent: :destroy
+  has_one :image, as: :imageable, dependent: :destroy
 
-  has_many :images, as: :imageable, dependent: :destroy
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
@@ -14,6 +14,8 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 6 }, on: :create
   validates :email, uniqueness: true, format: { with: EMAIL_REGEXP,
                                                 message: 'is invalid' }
+
+  accepts_nested_attributes_for :image
 
   before_create :build_role, on: :create, unless: :role
 end
