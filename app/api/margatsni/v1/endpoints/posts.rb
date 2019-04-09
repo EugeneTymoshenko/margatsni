@@ -8,9 +8,27 @@ module Margatsni
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
           end
+
+          def represent_posts(posts)
+            present :page, posts.current_page
+            present :per_page, posts.current_per_page
+            present :posts, posts, with: Margatsni::V1::Entities::Post
+          end
         end
 
         namespace :posts do
+          desc 'Return list of post with choosen hashtag'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+          end
+          get :tag do
+            tag = Tag.find_by(name: params[:tag_name])
+            posts = tag.posts.page(params[:page]).per(params[:per_page])
+
+            represent_posts(posts)
+          end
+
           desc 'Return list of posts'
           params do
             optional :page, type: Integer
@@ -19,9 +37,7 @@ module Margatsni
           get do
             posts = Post.all.order(id: :desc).page(params[:page]).per(params[:per_page])
 
-            present :page, posts.current_page
-            present :per_page, posts.current_per_page
-            present :posts, posts, with: Margatsni::V1::Entities::Post
+            represent_posts(posts)
           end
 
           desc 'Return a specific post'
