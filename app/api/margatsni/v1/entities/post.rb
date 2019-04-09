@@ -16,6 +16,9 @@ module Margatsni
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(instance.user, except: %i[email])
         end
+        expose :tags do |instance|
+          Margatsni::V1::Entities::Tag.represent(instance.tags)
+        end
 
         with_options(format_with: :european_timestamp) do
           expose :created_at
