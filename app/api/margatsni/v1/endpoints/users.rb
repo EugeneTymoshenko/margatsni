@@ -121,7 +121,7 @@ module Margatsni
 
             present :page, users.current_page
             present :per_page, users.current_per_page
-            present :users, users, with: Margatsni::V1::Entities::User, only: [:username]
+            present :users, users, with: Margatsni::V1::Entities::User, only: %i[username image]
           end
         end
       end
