@@ -16,8 +16,8 @@ module Margatsni
           end
 
           def user
-            user ||= User.find_by(username: params[:username])
-            user || error!('User not found!', 404)
+            @user ||= User.find_by(username: params[:username])
+            @user || error!('User not found!', 404)
           end
         end
 
