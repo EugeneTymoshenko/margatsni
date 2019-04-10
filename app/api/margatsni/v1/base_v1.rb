@@ -12,9 +12,13 @@ module Margatsni
       format :json
 
       helpers Margatsni::V1::Helpers::Auth
+
       mount Margatsni::V1::Endpoints::Users
       mount Margatsni::V1::Endpoints::Posts
       mount Margatsni::V1::Endpoints::Comments
+      mount Margatsni::V1::Endpoints::Likes, with: { likeable: 'posts' }
+      mount Margatsni::V1::Endpoints::Likes, with: { likeable: 'comments' }
+
       add_swagger_documentation api_version: 'v1', hide_documentation_path: true
     end
   end

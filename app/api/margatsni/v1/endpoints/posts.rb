@@ -4,8 +4,6 @@ module Margatsni
   module V1
     module Endpoints
       class Posts < Margatsni::V1::BaseV1
-        mount Likes, with: { likeable: 'posts' }
-
         helpers do
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post

@@ -7,7 +7,7 @@ module Margatsni
         helpers do
           def liked?
             Like.where(
-              user_id: current_user.id,
+              user: current_user,
               likeable_type: likeable_type,
               likeable_id: params[:likeable_id]
             ).exists?
@@ -60,7 +60,7 @@ module Margatsni
           desc "Like #{configuration[:likeable]}"
           post do
             error!('You can\'t like more than once', 422) if liked?
-            like = owner.likes.build(user_id: current_user.id)
+            like = owner.likes.build(user: current_user)
             error!(like.errors.messages) unless like.save
 
             represent_owner
@@ -70,7 +70,7 @@ module Margatsni
           delete do
             error!('Cannot dislike', 422) unless liked?
 
-            present :status, owner.likes.where(user_id: current_user.id).destroy_all.present?
+            present :status, owner.likes.where(user: current_user).destroy_all.present?
           end
         end
       end
