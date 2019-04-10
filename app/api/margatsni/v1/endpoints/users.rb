@@ -70,65 +70,6 @@ module Margatsni
               represent_current_user(current_user)
             end
           end
-
-          namespace :following do
-            desc 'return list of followed users'
-            params do
-              requires :user_id, type: Integer, allow_blank: false
-            end
-            get do
-              followed = FollowerUser.where(user_id: params[:user_id])
-              present followed, with: Margatsni::V1::Entities::Follow, except: [:user_id]
-            end
-
-            before do
-              authenticate_request!
-            end
-
-            desc 'subscribe'
-            params do
-              requires :follower_id, type: Integer, allow_blank: false
-            end
-            post do
-              followed = current_user.follower_users.find_by(follower_id: params[:follower_id])
-              error!('User already followed', 406) if followed
-              present :status, !current_user.follower_users.create(declared(params)).present?
-            end
-
-            desc 'unsubscribe'
-            params do
-              requires :follower_id, type: Integer, allow_blank: false
-            end
-            delete do
-              followed = current_user.follower_users.find_by(follower_id: params[:follower_id])
-              error!('User not found', 404) unless followed
-              present :status, !followed.destroy.present?
-            end
-          end
-
-          namespace :followers do
-            desc 'return list of followers users'
-            params do
-              requires :follower_id, type: Integer, allow_blank: false
-            end
-            get do
-              followers = FollowerUser.where(follower_id: params[:follower_id])
-              present followers, with: Margatsni::V1::Entities::Follow, except: [:follower_id]
-            end
-          end
-
-          desc 'get list of users'
-          params do
-            optional :page, type: Integer
-            optional :per_page, type: Integer
-          end
-          get :people do
-            users = User.all.page(params[:page]).per(params[:per_page])
-
-            present :page, users.current_page
-            present :per_page, users.current_per_page
-            present :users, users, with: Margatsni::V1::Entities::User, only: [:username]
-          end
         end
       end
     end
