@@ -32,14 +32,14 @@ module Margatsni
               present :status, !following_user.destroy.present?
             end
           end
-        end
 
-        namespace :followers do
-          get do
-            followers = User.find(params[:user_id]).followers
-            present followers, with: Margatsni::V1::Entities::User
-          rescue ActiveRecord::RecordNotFound
-            error!('User not found!', 404)
+          namespace :followers do
+            get do
+              followers = User.find(params[:user_id]).followers
+              present followers, with: Margatsni::V1::Entities::User
+            rescue ActiveRecord::RecordNotFound
+              error!('User not found!', 404)
+            end
           end
         end
       end
