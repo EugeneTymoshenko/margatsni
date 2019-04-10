@@ -22,12 +22,12 @@ module Margatsni
             requires :email, type: String, regexp: User::EMAIL_REGEXP, allow_blank: false
             requires :password, type: String, allow_blank: false
             optional :image_attributes, type: Hash do
-              requires :file_data, type: File
+              requires :file_data, type: File, allow_blank: false
             end
           end
           post do
             user = User.new(declared(params, include_missing: false))
-            error!(user.errors.messages, 406) unless user.save
+            error!(user.errors.messages, 422) unless user.save
 
             represent_user_with_token(user.reload)
           end
@@ -61,7 +61,7 @@ module Margatsni
               optional :password, type: String, allow_blank: false
               optional :bio, type: String, length: 300
               optional :image_attributes, type: Hash do
-                requires :file_data, type: File
+                requires :file_data, type: File, allow_blank: false
               end
             end
             put do
