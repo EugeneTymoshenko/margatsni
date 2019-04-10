@@ -36,8 +36,10 @@ module Margatsni
 
         namespace :followers do
           get do
-            followers = FollowerUser.where(follower_id: params[:follower_id])
-            present followers, with: Margatsni::V1::Entities::Follow, except: [:follower_id]
+            followers = User.find(params[:user_id]).followers
+            present followers, with: Margatsni::V1::Entities::User
+          rescue ActiveRecord::RecordNotFound
+            error!('User not found!', 404)
           end
         end
       end
