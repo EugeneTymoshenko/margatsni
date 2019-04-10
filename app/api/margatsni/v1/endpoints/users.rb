@@ -22,7 +22,7 @@ module Margatsni
             requires :email, type: String, regexp: User::EMAIL_REGEXP, allow_blank: false
             requires :password, type: String, allow_blank: false
             optional :image_attributes, type: Hash do
-              requires :file_data, type: File, allow_blank: true
+              requires :file_data, type: File
             end
           end
           post do
@@ -61,7 +61,7 @@ module Margatsni
               optional :password, type: String, allow_blank: false
               optional :bio, type: String, length: 300
               optional :image_attributes, type: Hash do
-                requires :file_data, type: File, allow_blank: true
+                requires :file_data, type: File
               end
             end
             put do
