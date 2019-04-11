@@ -10,8 +10,17 @@ module Margatsni
 
         expose :id
         expose :body
+        expose :nested_comments do |instance|
+          Margatsni::V1::Entities::Comment.represent(
+            instance.comments,
+            except: %i[nested_comments]
+          )
+        end
         expose :user do |instance|
-          Margatsni::V1::Entities::User.represent(instance.user, except: %i[email bio])
+          Margatsni::V1::Entities::User.represent(
+            instance.user,
+            except: %i[email bio]
+          )
         end
 
         with_options(format_with: :european_timestamp) do
