@@ -27,7 +27,7 @@ module Margatsni
           end
           post do
             user = User.new(declared(params, include_missing: false))
-            error!(user.errors.messages, 422) unless user.save
+            error!(user.errors.full_messages, 422) unless user.save
 
             represent_user_with_token(user.reload)
           end
