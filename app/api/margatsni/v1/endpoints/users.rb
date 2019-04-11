@@ -19,19 +19,22 @@ module Margatsni
           desc 'register a user'
           params do
             requires :username, type: String, allow_blank: false
-            requires :email, type: String, regexp: User::EMAIL_REGEXP
+            requires :email, type: String, regexp: User::EMAIL_REGEXP, allow_blank: false
             requires :password, type: String, allow_blank: false
+            optional :image_attributes, type: Hash do
+              requires :file_data, type: File, allow_blank: false
+            end
           end
           post do
-            user = User.new(declared(params))
-            error!('Username or email already taken!', 406) unless user.save
+            user = User.new(declared(params, include_missing: false))
+            error!(user.errors.full_messages, 422) unless user.save
 
-            represent_user_with_token(user)
+            represent_user_with_token(user.reload)
           end
 
           desc 'user login'
           params do
-            requires :email, type: String, regexp: User::EMAIL_REGEXP
+            requires :email, type: String, regexp: User::EMAIL_REGEXP, allow_blank: false
             requires :password, type: String, allow_blank: false
           end
           post :login do
@@ -42,6 +45,10 @@ module Margatsni
           end
 
           namespace :me do
+            before do
+              authenticate_request!
+            end
+
             desc 'profile'
             get do
               represent_current_user(current_user)
@@ -50,9 +57,12 @@ module Margatsni
             desc 'edit user'
             params do
               optional :username, type: String, allow_blank: false
-              optional :email, type: String, regexp: User::EMAIL_REGEXP
+              optional :email, type: String, regexp: User::EMAIL_REGEXP, allow_blank: false
               optional :password, type: String, allow_blank: false
-              optional :bio, type: String
+              optional :bio, type: String, length: 300
+              optional :image_attributes, type: Hash do
+                requires :file_data, type: File, allow_blank: false
+              end
             end
             put do
               current_user.update(declared(params))
