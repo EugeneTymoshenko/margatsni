@@ -8,6 +8,9 @@ module Margatsni
         expose :username
         expose :email
         expose :bio
+        expose :image do |instance|
+          instance.image&.file_data_url
+        end
       end
     end
   end
