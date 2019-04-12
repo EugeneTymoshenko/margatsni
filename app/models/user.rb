@@ -14,10 +14,10 @@ class User < ApplicationRecord
   has_many :followers, through: :follower_users, source: :user, class_name: 'User'
   has_many :following, through: :following_users, source: :follower, class_name: 'User'
 
-  validates :username, presence: true, uniqueness: true
+  validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }, on: :create
-  validates :email, uniqueness: true, format: { with: EMAIL_REGEXP,
-                                                message: 'is invalid' }
+  validates :email, uniqueness: { case_sensitive: false }, format: { with: EMAIL_REGEXP,
+                                                                     message: 'is invalid' }
 
   accepts_nested_attributes_for :image
 
