@@ -11,8 +11,8 @@ class User < ApplicationRecord
   has_many :follower_users, dependent: :destroy, foreign_key: :follower_id
   has_many :following_users, dependent: :destroy, class_name: 'FollowerUser'
 
-  has_many :followers, through: :follower_users, source_type: :user, class_name: 'User'
-  has_many :following, through: :following_users, source_type: :follower, class_name: 'User'
+  has_many :followers, through: :follower_users, source: :user, class_name: 'User'
+  has_many :following, through: :following_users, source: :follower, class_name: 'User'
 
   validates :username, presence: true, uniqueness: true
   validates :password, length: { minimum: 6 }, on: :create
