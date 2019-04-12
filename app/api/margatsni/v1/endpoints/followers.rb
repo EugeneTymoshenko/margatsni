@@ -20,9 +20,9 @@ module Margatsni
 
             desc 'subscribe'
             post do
-              following_user = current_user.following_users.find_by(following_id: params[:user_id])
+              following_user = current_user.following_users.find_by(follower_id: params[:user_id])
               error!('User already followed', 406) if following_user
-              present :status, !current_user.following_users.create(following_id: params[:user_id]).present?
+              present :status, !current_user.following_users.create(follower_id: params[:user_id]).present?
             end
 
             desc 'unsubscribe'
