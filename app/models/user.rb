@@ -17,7 +17,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }, on: :create
   validates :email, uniqueness: { case_sensitive: false }, format: { with: EMAIL_REGEXP,
-                                                message: 'is invalid' }
+                                                                     message: 'is invalid' }
 
   accepts_nested_attributes_for :image
 

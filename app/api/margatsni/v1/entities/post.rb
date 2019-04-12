@@ -14,7 +14,10 @@ module Margatsni
           instance.image.file_data_url
         end
         expose :user do |instance|
-          Margatsni::V1::Entities::User.represent(instance.user, except: %i[email])
+          Margatsni::V1::Entities::User.represent(
+            instance.user,
+            except: %i[email bio]
+          )
         end
 
         with_options(format_with: :european_timestamp) do

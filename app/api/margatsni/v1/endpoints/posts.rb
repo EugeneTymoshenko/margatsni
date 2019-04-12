@@ -5,6 +5,8 @@ module Margatsni
     module Endpoints
       class Posts < Margatsni::V1::BaseV1
         helpers do
+          attr_reader :user
+
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
           end
@@ -15,7 +17,7 @@ module Margatsni
             present :posts, posts, with: Margatsni::V1::Entities::Post
           end
 
-          def user
+          def find_user!
             @user ||= User.find_by(username: params[:username])
             @user || error!('User not found!', 404)
           end
@@ -51,14 +53,15 @@ module Margatsni
             optional :per_page, type: Integer
           end
           get 'user/:username' do
+            find_user!
             posts = user.posts.order(id: :desc).page(params[:page]).per(params[:per_page])
 
             represent_posts(posts)
           end
 
           desc 'Return a specific post'
-          get ':id' do
-            post = Post.find(params[:id])
+          get ':post_id' do
+            post = Post.find(params[:post_id])
 
             represent_post(post)
           rescue ActiveRecord::RecordNotFound
@@ -83,13 +86,13 @@ module Margatsni
             represent_post(post.reload)
           end
 
-          route_param :id do
+          route_param :post_id do
             desc 'Update a post'
             params do
               requires :body, type: String, length: 500
             end
             put do
-              post = current_user.posts.find(params[:id])
+              post = current_user.posts.find(params[:post_id])
               post.update(declared(params))
 
               represent_post(post)
@@ -99,7 +102,7 @@ module Margatsni
 
             desc 'Delete a post'
             delete do
-              present :status, !current_user.posts.find(params[:id]).destroy.nil?
+              present :status, current_user.posts.find(params[:post_id]).destroy.present?
             rescue ActiveRecord::RecordNotFound
               error!('Post not found!', 404)
             end
