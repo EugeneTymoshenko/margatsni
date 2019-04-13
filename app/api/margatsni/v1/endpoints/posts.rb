@@ -5,7 +5,7 @@ module Margatsni
     module Endpoints
       class Posts < Margatsni::V1::BaseV1
         helpers do
-          attr_reader :user
+          attr_reader :user, :tag
 
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post
@@ -15,6 +15,11 @@ module Margatsni
             present :page, posts.current_page
             present :per_page, posts.current_per_page
             present :posts, posts, with: Margatsni::V1::Entities::Post
+          end
+
+          def find_tag!
+            @tag ||= Tag.find_by(name: params[:tag_name])
+            @tag || error!('Tag not found!', 404)
           end
 
           def find_user!
@@ -29,8 +34,8 @@ module Margatsni
             optional :page, type: Integer
             optional :per_page, type: Integer
           end
-          get :tag do
-            tag = Tag.find_by(name: params[:tag_name])
+          get 'tags/:tag_name' do
+            find_tag!
             posts = tag.posts.page(params[:page]).per(params[:per_page])
 
             represent_posts(posts)
