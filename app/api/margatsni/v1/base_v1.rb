@@ -16,6 +16,7 @@ module Margatsni
       mount Margatsni::V1::Endpoints::Users
       mount Margatsni::V1::Endpoints::Posts
       mount Margatsni::V1::Endpoints::Comments
+      mount Margatsni::V1::Endpoints::Followers
       mount Margatsni::V1::Endpoints::Likes, with: { likeable: 'posts' }
       mount Margatsni::V1::Endpoints::Likes, with: { likeable: 'comments' }
 
