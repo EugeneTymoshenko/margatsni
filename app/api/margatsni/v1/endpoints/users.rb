@@ -44,20 +44,16 @@ module Margatsni
             represent_user_with_token(user)
           end
 
-          desc 'get list of users'
+          desc 'get list of users and search user by username'
           params do
             optional :page, type: Integer
             optional :per_page, type: Integer
-            optional :username, type: String, allow_blank: false
+            optional :username_query, type: String, allow_blank: false
           end
           get do
-            users = User.all.page(params[:page]).per(params[:per_page])
-            find_user = users.sea
+            users = User.search_by_username(params[:username_query]).page(params[:page]).per(params[:per_page])
 
-            present :page, users.current_page
-            present :per_page, users.current_per_page
             present :users, users, with: Margatsni::V1::Entities::User, only: %i[username image]
-            present :users, find_user, with: Margatsni::V1::Entities::User, only: %i[username image]
           end
 
           namespace :me do
