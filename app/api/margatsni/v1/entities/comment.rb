@@ -16,6 +16,9 @@ module Margatsni
             except: %i[nested_comments]
           )
         end
+        expose :likes_count do |instance|
+          instance.likes.count
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(
             instance.user,

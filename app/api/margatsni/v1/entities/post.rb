@@ -16,6 +16,9 @@ module Margatsni
         expose :comments do |instance|
           Margatsni::V1::Entities::Comment.represent(instance.comments.last(3))
         end
+        expose :likes_count do |instance|
+          instance.likes.count
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(
             instance.user,
