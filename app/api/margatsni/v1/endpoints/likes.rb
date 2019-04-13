@@ -16,20 +16,20 @@ module Margatsni
           def owner
             case params[:likeable]
             when 'posts'
-              post
+              find_post!
             when 'comments'
-              comment
+              find_comment!
             else
               error!('Wrong route!', 404)
             end
           end
 
-          def post
+          def find_post!
             @post ||= Post.find_by(id: params[:likeable_id])
             @post || error!('Post not found', 404)
           end
 
-          def comment
+          def find_comment!
             @comment ||= Comment.find_by(id: params[:likeable_id])
             @comment || error!('Comment not found', 404)
           end
