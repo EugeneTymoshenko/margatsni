@@ -13,6 +13,10 @@ module Margatsni
           def represent_current_user(current_user)
             present :user, current_user, with: Margatsni::V1::Entities::User
           end
+
+          def represent_specific_user(user)
+            present :user, user, with: Margatsni::V1::Entities::User
+          end
         end
 
         namespace :users do
@@ -54,6 +58,15 @@ module Margatsni
             users = User.search_by_username(params[:username_query]).page(params[:page]).per(params[:per_page])
 
             present :users, users, with: Margatsni::V1::Entities::User, only: %i[username image]
+          end
+
+          desc 'return specific user'
+          get ':user_id' do
+            user = User.find(params[:user_id])
+
+            represent_specific_user(user)
+          rescue ActiveRecord::RecordNotFound
+            error!('User not found!', 404)
           end
 
           namespace :me do
