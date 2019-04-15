@@ -10,8 +10,8 @@ module Margatsni
             present :user, user, with: Margatsni::V1::Entities::User
           end
 
-          def represent_current_user(current_user)
-            present :user, current_user, with: Margatsni::V1::Entities::User
+          def represent_user(user)
+            present :user, user, with: Margatsni::V1::Entities::User
           end
         end
 
@@ -63,7 +63,7 @@ module Margatsni
 
             desc 'profile'
             get do
-              represent_current_user(current_user)
+              represent_user(current_user)
             end
 
             desc 'edit user'
@@ -79,8 +79,15 @@ module Margatsni
             put do
               current_user.update(declared(params))
 
-              represent_current_user(current_user)
+              represent_user(current_user)
             end
+          end
+
+          desc 'return specific user'
+          get ':user_id' do
+            user = User.find_by(id: params[:user_id])
+            error!('User not found', 404) unless user
+            represent_user(user)
           end
         end
       end
