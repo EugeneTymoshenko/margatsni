@@ -10,24 +10,13 @@ class Post < ApplicationRecord
 
   accepts_nested_attributes_for :image
 
-  after_create :create_tags
-
-  before_update :update_tags
-
-  def update_tags
-    post = Post.find_by(id: id)
-    post.tags.clear
-    extract_name_tags.each do |name|
-      tag = Tag.find_or_create_by(name: name)
-      post.tags << tag
-    end
-  end
+  before_save :create_tags, if: :body_changed?
 
   def create_tags
-    post = Post.find_by(id: id)
+    tags.clear
     extract_name_tags.each do |name|
       tag = Tag.find_or_create_by(name: name)
-      post.tags << tag
+      tags << tag
     end
   end
 
