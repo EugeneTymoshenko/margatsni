@@ -19,6 +19,12 @@ module Margatsni
         expose :likes_count do |instance|
           instance.likes.count
         end
+        expose :liked do |instance|
+          Margatsni::V1::Entities::Like.represent(
+            instance.likes,
+            except: %i[id]
+          )
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(
             instance.user,
