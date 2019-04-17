@@ -77,7 +77,8 @@ module Margatsni
               end
             end
             put do
-              current_user.update(declared(params))
+              current_user.update(declared(params, include_missing: false))
+              error!(current_user.errors.full_messages, 422) unless current_user
 
               represent_user(current_user)
             end
