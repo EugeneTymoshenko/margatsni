@@ -12,6 +12,7 @@ module Margatsni
       format :json
 
       helpers Margatsni::V1::Helpers::Auth
+      error_formatter :json, Margatsni::V1::Helpers::ErrorFormatter
 
       mount Margatsni::V1::Endpoints::Users
       mount Margatsni::V1::Endpoints::Posts
