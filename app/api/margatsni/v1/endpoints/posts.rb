@@ -5,7 +5,7 @@ module Margatsni
     module Endpoints
       class Posts < Margatsni::V1::BaseV1
         helpers do
-          attr_reader :user
+          attr_reader :user, :tag
 
           def represent_post(post)
             present :post, post, with: Margatsni::V1::Entities::Post, user: current_user
@@ -17,6 +17,11 @@ module Margatsni
             present :posts, posts, with: Margatsni::V1::Entities::Post, user: current_user
           end
 
+          def find_tag!
+            @tag ||= Tag.find_by(name: params[:tag_name])
+            @tag || error!('Tag not found!', 404)
+          end
+
           def find_user!
             @user ||= User.find_by(username: params[:username])
             @user || error!('User not found!', 404)
@@ -24,6 +29,18 @@ module Margatsni
         end
 
         namespace :posts do
+          desc 'Return list of post with choosen hashtag'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+          end
+          get 'tags/:tag_name' do
+            find_tag!
+            posts = tag.posts.page(params[:page]).per(params[:per_page])
+
+            represent_posts(posts)
+          end
+
           desc 'Return list of posts'
           params do
             optional :page, type: Integer

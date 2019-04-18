@@ -28,6 +28,7 @@ module Margatsni
             except: %i[email bio]
           )
         end
+        expose :tags, with: Margatsni::V1::Entities::Tag
 
         with_options(format_with: :european_timestamp) do
           expose :created_at

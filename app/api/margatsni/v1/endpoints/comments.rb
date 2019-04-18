@@ -24,10 +24,6 @@ module Margatsni
         end
 
         namespace 'posts/:post_id' do
-          before do
-            find_post!
-          end
-
           resources :comments do
             desc 'Get all comments for a specific post'
             params do
@@ -35,6 +31,7 @@ module Margatsni
               optional :per_page, type: Integer
             end
             get do
+              find_post!
               comments = post.comments.order(id: :desc).page(params[:page]).per(params[:per_page])
 
               present :page, comments.current_page
@@ -51,6 +48,7 @@ module Margatsni
               requires :body, type: String, allow_blank: false, length: 300
             end
             post do
+              find_post!
               comment = post.comments.build(body: params[:body], user: current_user)
               error!(comment.errors.full_messages) unless comment.save
 
@@ -76,15 +74,12 @@ module Margatsni
                 present :status, comment.destroy.present?
               end
 
-              before do
-                find_comment!
-              end
-
               desc 'Create a nested comment'
               params do
                 requires :body, type: String, allow_blank: false, length: 300
               end
               post do
+                find_comment!
                 nested_comment = comment.comments.build(body: params[:body], user: current_user)
                 error!(nested_comment.errors.full_messages) unless nested_comment.save
 
