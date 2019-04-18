@@ -32,7 +32,7 @@ module Margatsni
             end
             get do
               find_post!
-              comments = post.comments.page(params[:page]).per(params[:per_page])
+              comments = post.comments.order(id: :desc).page(params[:page]).per(params[:per_page])
 
               present :page, comments.current_page
               present :per_page, comments.current_per_page

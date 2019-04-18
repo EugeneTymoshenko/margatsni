@@ -10,8 +10,8 @@ module Margatsni
             present :user, user, with: Margatsni::V1::Entities::User
           end
 
-          def represent_current_user(current_user)
-            present :user, current_user, with: Margatsni::V1::Entities::User
+          def represent_user(user)
+            present :user, user, with: Margatsni::V1::Entities::User
           end
         end
 
@@ -43,17 +43,16 @@ module Margatsni
 
             represent_user_with_token(user)
           end
-          
-          desc 'get list of users'
+
+          desc 'get list of users and search user by username'
           params do
             optional :page, type: Integer
             optional :per_page, type: Integer
+            optional :username_query, type: String, allow_blank: false
           end
           get do
-            users = User.all.page(params[:page]).per(params[:per_page])
+            users = User.search_by_username(params[:username_query]).page(params[:page]).per(params[:per_page])
 
-            present :page, users.current_page
-            present :per_page, users.current_per_page
             present :users, users, with: Margatsni::V1::Entities::User, only: %i[username image]
           end
 
@@ -64,7 +63,7 @@ module Margatsni
 
             desc 'profile'
             get do
-              represent_current_user(current_user)
+              represent_user(current_user)
             end
 
             desc 'edit user'
@@ -80,8 +79,15 @@ module Margatsni
             put do
               current_user.update(declared(params))
 
-              represent_current_user(current_user)
+              represent_user(current_user)
             end
+          end
+
+          desc 'return specific user'
+          get ':user_id' do
+            user = User.find_by(id: params[:user_id])
+            error!('User not found', 404) unless user
+            represent_user(user)
           end
         end
       end
