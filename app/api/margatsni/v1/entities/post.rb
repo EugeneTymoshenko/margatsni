@@ -19,12 +19,16 @@ module Margatsni
         expose :likes_count do |instance|
           instance.likes.count
         end
+        expose :liked do |instance, options|
+          instance.likes.where(user: options[:user]).exists?
+        end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(
             instance.user,
             except: %i[email bio]
           )
         end
+        expose :tags, with: Margatsni::V1::Entities::Tag
 
         with_options(format_with: :european_timestamp) do
           expose :created_at

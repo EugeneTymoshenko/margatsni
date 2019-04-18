@@ -5,16 +5,21 @@ module Margatsni
     module Endpoints
       class Posts < Margatsni::V1::BaseV1
         helpers do
-          attr_reader :user
+          attr_reader :user, :tag
 
           def represent_post(post)
-            present :post, post, with: Margatsni::V1::Entities::Post
+            present :post, post, with: Margatsni::V1::Entities::Post, user: current_user
           end
 
           def represent_posts(posts)
             present :page, posts.current_page
             present :per_page, posts.current_per_page
-            present :posts, posts, with: Margatsni::V1::Entities::Post
+            present :posts, posts, with: Margatsni::V1::Entities::Post, user: current_user
+          end
+
+          def find_tag!
+            @tag ||= Tag.find_by(name: params[:tag_name])
+            @tag || error!('Tag not found!', 404)
           end
 
           def find_user!
@@ -24,12 +29,25 @@ module Margatsni
         end
 
         namespace :posts do
+          desc 'Return list of post with choosen hashtag'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+          end
+          get 'tags/:tag_name' do
+            find_tag!
+            posts = tag.posts.page(params[:page]).per(params[:per_page])
+
+            represent_posts(posts)
+          end
+
           desc 'Return list of posts'
           params do
             optional :page, type: Integer
             optional :per_page, type: Integer
           end
           get do
+            public_endpoint_authentication
             posts = Post.all.order(id: :desc).page(params[:page]).per(params[:per_page])
 
             represent_posts(posts)
@@ -53,6 +71,7 @@ module Margatsni
             optional :per_page, type: Integer
           end
           get 'user/:username' do
+            public_endpoint_authentication
             find_user!
             posts = user.posts.order(id: :desc).page(params[:page]).per(params[:per_page])
 
@@ -61,6 +80,7 @@ module Margatsni
 
           desc 'Return a specific post'
           get ':post_id' do
+            public_endpoint_authentication
             post = Post.find(params[:post_id])
 
             represent_post(post)
