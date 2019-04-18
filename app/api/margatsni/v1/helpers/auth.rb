@@ -19,7 +19,17 @@ module Margatsni
           error!('No such user', 401) unless current_user
         end
 
+        def public_endpoint_authentication
+          return unless token_present?
+
+          authenticate_request!
+        end
+
         private
+
+        def token_present?
+          request.headers['Authorization'].present?
+        end
 
         def validate_token!
           TokenProvider.valid?(token)
