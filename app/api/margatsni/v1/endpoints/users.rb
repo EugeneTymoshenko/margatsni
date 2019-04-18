@@ -84,9 +84,10 @@ module Margatsni
             end
           end
 
-          desc 'return specific user'
-          get ':user_id' do
-            user = User.find_by(id: params[:user_id])
+          desc 'return specific user by username'
+          get ':username' do
+            user = User.find_by(username: params[:username])
+
             error!('User not found', 404) unless user
             represent_user(user)
           end
