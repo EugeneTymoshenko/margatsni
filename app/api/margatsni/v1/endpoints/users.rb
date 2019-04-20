@@ -53,6 +53,9 @@ module Margatsni
           get do
             users = User.search_by_username(params[:username_query]).page(params[:page]).per(params[:per_page])
 
+            present :total_pages, users.total_pages
+            present :page, users.current_page
+            present :per_page, users.current_per_page
             present :users, users, with: Margatsni::V1::Entities::User, only: %i[username image]
           end
 
