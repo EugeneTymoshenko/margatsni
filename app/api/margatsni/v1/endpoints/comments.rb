@@ -34,6 +34,7 @@ module Margatsni
               find_post!
               comments = post.comments.order(id: :desc).page(params[:page]).per(params[:per_page])
 
+              present :total_pages, comments.total_pages
               present :page, comments.current_page
               present :per_page, comments.current_per_page
               present :comments, comments, with: Margatsni::V1::Entities::Comment
