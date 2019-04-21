@@ -19,12 +19,12 @@ module Margatsni
 
           def find_tag!
             @tag ||= Tag.find_by(name: params[:tag_name])
-            @tag || error!('Tag not found!', 404)
+            @tag || not_found!(key: :tag)
           end
 
           def find_user!
             @user ||= User.find_by(username: params[:username])
-            @user || error!('User not found!', 404)
+            @user || not_found!(key: :user)
           end
         end
 
@@ -81,11 +81,10 @@ module Margatsni
           desc 'Return a specific post'
           get ':post_id' do
             public_endpoint_authentication
-            post = Post.find(params[:post_id])
+            post = Post.find_by(id: params[:post_id])
+            not_found!(key: :post) unless post
 
             represent_post(post)
-          rescue ActiveRecord::RecordNotFound
-            error!('Post not found!', 404)
           end
 
           before do
@@ -101,7 +100,7 @@ module Margatsni
           end
           post do
             post = current_user.posts.build(declared(params, include_missing: false))
-            error!(post.errors.full_messages, 422) unless post.save
+            error!(post.errors.messages, 422) unless post.save
 
             represent_post(post.reload)
           end
@@ -112,12 +111,11 @@ module Margatsni
               requires :body, type: String, length: 500
             end
             put do
-              post = current_user.posts.find(params[:post_id])
-              post.update(declared(params))
+              post = current_user.posts.find_by(id: params[:post_id])
+              not_found!(key: :post) unless post
+              error!(post.errors.messages, 422) unless post.update(declared(params))
 
               represent_post(post)
-            rescue ActiveRecord::RecordNotFound
-              error!('Post not found!', 404)
             end
 
             desc 'Delete a post'

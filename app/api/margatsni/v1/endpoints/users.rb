@@ -27,7 +27,7 @@ module Margatsni
           end
           post do
             user = User.new(declared(params, include_missing: false))
-            error!(user.errors.full_messages, 422) unless user.save
+            error!(user.errors.messages, 422) unless user.save
 
             represent_user_with_token(user.reload)
           end
@@ -38,10 +38,7 @@ module Margatsni
             requires :password, type: String, allow_blank: false
           end
           post :login do
-            user = authenticate_user!
-            error!('Invalid email/password combination', 401) unless user
-
-            represent_user_with_token(user)
+            represent_user_with_token(authenticate_user!)
           end
 
           desc 'get list of users and search user by username'
@@ -77,8 +74,7 @@ module Margatsni
               end
             end
             put do
-              current_user.update(declared(params, include_missing: false))
-              error!(current_user.errors.full_messages, 422) unless current_user
+              error!(current_user.errors.messages, 422) unless current_user.update(declared(params, include_missing: false))
 
               represent_user(current_user)
             end
@@ -88,7 +84,7 @@ module Margatsni
           get ':username' do
             user = User.find_by(username: params[:username])
 
-            error!('User not found', 404) unless user
+            not_found!(key: :user) unless user
             represent_user(user)
           end
         end
