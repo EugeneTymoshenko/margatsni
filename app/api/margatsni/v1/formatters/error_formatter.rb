@@ -34,9 +34,3 @@ module Margatsni
     end
   end
 end
-
-# {
-#     errors: {
-#         email: [‘is not valid’, ‘some other exception’]
-#     }
-# }
