@@ -2,7 +2,7 @@
 
 module Margatsni
   module V1
-    module Helpers
+    module Formatters
       module ErrorFormatter
         def self.call(message, backtrace, options, env, original_exception)
           formatter =
