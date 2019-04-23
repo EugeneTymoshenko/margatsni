@@ -95,12 +95,12 @@ module Margatsni
           params do
             requires :body, type: String, length: 500
             requires :image_attributes, type: Hash do
-              requires :file_data, type: File, allow_blank: false
+              optional :file_data, type: File, allow_blank: false
             end
           end
           post do
             post = current_user.posts.build(declared(params, include_missing: false))
-            error!(post.errors.messages, 422) unless post.save
+            error!(post.errors.full_messages, 422) unless post.save
 
             represent_post(post.reload)
           end
@@ -120,9 +120,10 @@ module Margatsni
 
             desc 'Delete a post'
             delete do
-              present :status, current_user.posts.find(params[:post_id]).destroy.present?
-            rescue ActiveRecord::RecordNotFound
-              error!('Post not found!', 404)
+              post = current_user.posts.find_by(id: params[:post_id])
+              not_found!(key: :post) unless post
+
+              present :status, post.destroy.present?
             end
           end
         end
