@@ -13,13 +13,13 @@ module Margatsni
 
           def find_post!
             @post ||= Post.find_by(id: params[:post_id])
-            @post || error!('Post not found', 404)
+            @post || not_found!(key: :post)
           end
 
           def find_comment!(scope = {})
             scope[:id] = params[:comment_id]
             @comment ||= Comment.find_by(scope)
-            @comment || error!('Comment not found', 404)
+            @comment || not_found!(key: :comment)
           end
         end
 
@@ -50,7 +50,7 @@ module Margatsni
             post do
               find_post!
               comment = post.comments.build(body: params[:body], user: current_user)
-              error!(comment.errors.full_messages) unless comment.save
+              error!(comment.errors.messages) unless comment.save
 
               represent_comment(comment)
             end
@@ -61,6 +61,7 @@ module Margatsni
                 requires :body, type: String, allow_blank: false, length: 300
               end
               put do
+                find_post!
                 find_comment!(user: current_user)
                 comment.update(declared(params))
 
@@ -79,9 +80,10 @@ module Margatsni
                 requires :body, type: String, allow_blank: false, length: 300
               end
               post do
+                find_post!
                 find_comment!
                 nested_comment = comment.comments.build(body: params[:body], user: current_user)
-                error!(nested_comment.errors.full_messages) unless nested_comment.save
+                error!(nested_comment.errors.messages) unless nested_comment.save
 
                 represent_comment(nested_comment)
               end
