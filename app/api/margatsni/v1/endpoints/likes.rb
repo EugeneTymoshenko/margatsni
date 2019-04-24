@@ -35,7 +35,11 @@ module Margatsni
           end
 
           def represent_owner
-            present likeable_type.downcase.to_sym, owner, with: "Margatsni::V1::Entities::#{likeable_type}".constantize, user: current_user
+            present likeable_type.downcase.to_sym,
+                    owner,
+                    with: "Margatsni::V1::Entities::#{likeable_type}".constantize,
+                    except: %i[nested_comments],
+                    user: current_user
           end
 
           private

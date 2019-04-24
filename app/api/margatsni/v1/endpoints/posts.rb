@@ -12,6 +12,7 @@ module Margatsni
           end
 
           def represent_posts(posts)
+            present :total_pages, posts.total_pages
             present :page, posts.current_page
             present :per_page, posts.current_per_page
             present :posts, posts, with: Margatsni::V1::Entities::Post, user: current_user

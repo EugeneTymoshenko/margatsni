@@ -13,11 +13,15 @@ module Margatsni
         expose :nested_comments do |instance|
           Margatsni::V1::Entities::Comment.represent(
             instance.comments,
-            except: %i[nested_comments]
+            except: %i[nested_comments],
+            user: options[:user]
           )
         end
         expose :likes_count do |instance|
           instance.likes.count
+        end
+        expose :liked do |instance, options|
+          instance.likes.where(user: options[:user]).exists?
         end
         expose :user do |instance|
           Margatsni::V1::Entities::User.represent(
