@@ -101,7 +101,7 @@ module Margatsni
           end
           post do
             post = current_user.posts.build(declared(params, include_missing: false))
-            error!(post.errors.full_messages, 422) unless post.save
+            error!(post.errors.messages, 422) unless post.save
 
             represent_post(post.reload)
           end
