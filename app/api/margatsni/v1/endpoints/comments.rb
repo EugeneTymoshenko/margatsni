@@ -70,6 +70,7 @@ module Margatsni
 
               desc 'Delete a comment'
               delete do
+                find_post!
                 find_comment!(user: current_user)
 
                 present :status, comment.destroy.present?
