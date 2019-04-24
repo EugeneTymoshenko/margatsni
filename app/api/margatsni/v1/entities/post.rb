@@ -11,7 +11,7 @@ module Margatsni
         expose :id
         expose :body
         expose :image do |instance|
-          instance.image.file_data_url
+          instance.image&.file_data_url
         end
         expose :comments do |instance|
           Margatsni::V1::Entities::Comment.represent(instance.comments.last(3))

@@ -10,8 +10,12 @@ module Margatsni
       prefix 'api'
       version 'v1', using: :path
       format :json
+      default_format :json
 
+      helpers Margatsni::V1::Helpers::ErrorHelper
       helpers Margatsni::V1::Helpers::Auth
+
+      error_formatter :json, Margatsni::V1::Formatters::ErrorFormatter
 
       mount Margatsni::V1::Endpoints::Users
       mount Margatsni::V1::Endpoints::Posts

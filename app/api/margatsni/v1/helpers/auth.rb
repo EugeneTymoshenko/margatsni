@@ -8,7 +8,7 @@ module Margatsni
 
         def authenticate_user!
           user = User.authenticate(params[:email], params[:password])
-          return error!('Unauthorized', 401) unless user
+          error!({ credentials: ['are invalid'] }, 401) unless user
 
           user
         end
@@ -16,7 +16,7 @@ module Margatsni
         def authenticate_request!
           payload, _header = validate_token!
           self.current_user = User.find_by(id: payload['user_id'])
-          error!('No such user', 401) unless current_user
+          not_found!(key: :user) unless current_user
         end
 
         def public_endpoint_authentication
@@ -34,7 +34,7 @@ module Margatsni
         def validate_token!
           TokenProvider.valid?(token)
         rescue JWT::VerificationError, JWT::DecodeError
-          error!('Invalid token', 401)
+          error!({ token: ['is invalid or expired'] }, 401)
         end
 
         def token

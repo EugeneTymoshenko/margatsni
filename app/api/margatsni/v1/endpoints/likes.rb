@@ -20,18 +20,18 @@ module Margatsni
             when 'comments'
               find_comment!
             else
-              error!('Wrong route!', 404)
+              error!({ likeable_type: ['is invalid'] }, 404)
             end
           end
 
           def find_post!
             @post ||= Post.find_by(id: params[:likeable_id])
-            @post || error!('Post not found', 404)
+            @post || not_found!(key: :post)
           end
 
           def find_comment!
             @comment ||= Comment.find_by(id: params[:likeable_id])
-            @comment || error!('Comment not found', 404)
+            @comment || not_found!(key: :comment)
           end
 
           def represent_owner
@@ -63,7 +63,7 @@ module Margatsni
 
           desc "Like #{configuration[:likeable]}"
           post do
-            error!('You can\'t like more than once', 422) if liked?
+            error!({ like: ['already liked'] }, 422) if liked?
             like = owner.likes.build(user: current_user)
             error!(like.errors.messages) unless like.save
 
@@ -72,7 +72,7 @@ module Margatsni
 
           desc "Delete like for #{configuration[:likeable]}"
           delete do
-            error!('Cannot dislike', 422) unless liked?
+            error!({ like: ['cannot dislike'] }, 422) unless liked?
 
             present :status, owner.likes.where(user: current_user).destroy_all.present?
           end
