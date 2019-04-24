@@ -23,7 +23,7 @@ module Margatsni
               following_user = current_user.following_users.find_by(follower_id: params[:user_id])
               error!({ user: ['already followed'] }, 406) if following_user
 
-              present :status, !current_user.following_users.create(follower_id: params[:user_id]).present?
+              present :status, current_user.following_users.create(follower_id: params[:user_id]).present?
             end
 
             desc 'unsubscribe'
@@ -31,7 +31,7 @@ module Margatsni
               following_user = current_user.following_users.find_by(follower_id: params[:user_id])
               not_found!(key: :user) unless following_user
 
-              present :status, !following_user.destroy.present?
+              present :status, following_user.destroy.present?
             end
           end
 
