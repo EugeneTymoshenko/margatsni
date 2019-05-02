@@ -11,6 +11,9 @@ module Margatsni
         expose :image do |instance|
           instance.image&.file_data_url
         end
+        expose :followed do |instance, options|
+          instance.follower_users.where(user: options[:user]).exists?
+        end
       end
     end
   end
