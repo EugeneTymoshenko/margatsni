@@ -9,7 +9,7 @@ module Margatsni
             desc 'return list of following users'
             get do
               public_endpoint_authentication
-              following = User.find_by(id: params[:user_id]).following
+              following = User.find_by(id: params[:user_id])&.following
               not_found!(key: :user) unless following
 
               present following, with: Margatsni::V1::Entities::User, user: current_user
@@ -39,7 +39,7 @@ module Margatsni
           namespace :followers do
             get do
               public_endpoint_authentication
-              followers = User.find_by(id: params[:user_id]).followers
+              followers = User.find_by(id: params[:user_id])&.followers
               not_found!(key: :user) unless followers
 
               present followers, with: Margatsni::V1::Entities::User, user: current_user
