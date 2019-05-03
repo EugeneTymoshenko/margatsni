@@ -14,7 +14,10 @@ module Margatsni
           instance.image&.file_data_url
         end
         expose :comments do |instance|
-          Margatsni::V1::Entities::Comment.represent(instance.comments.last(3))
+          Margatsni::V1::Entities::Comment.represent(
+            instance.comments.last(3),
+            user: options[:user]
+          )
         end
         expose :likes_count do |instance|
           instance.likes.count
