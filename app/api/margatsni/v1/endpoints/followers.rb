@@ -21,6 +21,9 @@ module Margatsni
 
             desc 'subscribe'
             post do
+              user = User.find_by(id: params[:user_id])
+              not_found!(key: :user) unless user
+
               following_user = current_user.following_users.find_by(follower_id: params[:user_id])
               error!({ user: ['already followed'] }, 406) if following_user
 
