@@ -9,6 +9,7 @@ module Margatsni
         def authenticate_user!
           user = User.authenticate(params[:email], params[:password])
           error!({ credentials: ['are invalid'] }, 401) unless user
+          error!({ email: ['is not confirmed'] }, 401) unless user.email_confirmed?
 
           user
         end
