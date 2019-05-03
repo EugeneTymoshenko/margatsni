@@ -24,4 +24,20 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :image
 
   before_create :build_role, on: :create, unless: :role
+  before_create :confirmation_token
+
+  def email_activate
+    self.email_confirmed = true
+    self.confirm_token = nil
+    save
+  end
+
+  private
+
+  def confirmation_token
+    loop do
+      self.confirm_token = SecureRandom.urlsafe_base64
+      break unless User.where(confirm_token: confirm_token).exists?
+    end
+  end
 end
