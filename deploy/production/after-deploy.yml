@@ -20,7 +20,7 @@
 - debug: msg={{ ps.stdout }}
 
 - name: prepare assets and db
-  shell: docker-compose run --rm web rake assets:precompile db:create db:migrate
+  shell: docker-compose run --rm web rake assets:precompile db:migrate
   register: ps
   args:
     chdir: backend/current/deploy/production
