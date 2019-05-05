@@ -30,6 +30,21 @@ module Margatsni
         end
 
         namespace :posts do
+          desc 'return list of tags'
+          params do
+            optional :page, type: Integer
+            optional :per_page, type: Integer
+            optional :name_query, type: String
+          end
+          get :tags do
+            tags = Tag.search_by_name(params[:name_query]).page(params[:page]).per(params[:per_page])
+
+            present :total_pages, tags.total_pages
+            present :page, tags.current_page
+            present :per_page, tags.current_per_page
+            present :tags, tags, with: Margatsni::V1::Entities::Tag
+          end
+
           desc 'Return list of post with choosen hashtag'
           params do
             optional :page, type: Integer
