@@ -6,7 +6,7 @@
     ansistrano_deploy_to: "/home/app/backend"
     ansistrano_version_dir: "releases"
     ansistrano_current_dir: "current"
-    ansistrano_keep_releases: 3
+    ansistrano_keep_releases: 1
     ansistrano_deploy_via: "git"
     ansistrano_allow_anonymous_stats: false
     ansistrano_git_repo: "git@github.com:EugeneTymoshenko/margatsni.git"
