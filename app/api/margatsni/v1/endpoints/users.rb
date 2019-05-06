@@ -99,8 +99,8 @@ module Margatsni
           desc 'return specific user by username'
           get ':username' do
             user = User.find_by(username: params[:username])
-
             not_found!(key: :user) unless user
+
             represent_user(user)
           end
         end

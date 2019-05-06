@@ -8,10 +8,11 @@ module Margatsni
           namespace :following do
             desc 'return list of following users'
             get do
-              following = User.find_by(id: params[:user_id]).following
+              public_endpoint_authentication
+              following = User.find_by(id: params[:user_id])&.following
               not_found!(key: :user) unless following
 
-              present following, with: Margatsni::V1::Entities::User
+              present following, with: Margatsni::V1::Entities::User, user: current_user
             end
 
             before do
@@ -20,6 +21,9 @@ module Margatsni
 
             desc 'subscribe'
             post do
+              user = User.find_by(id: params[:user_id])
+              not_found!(key: :user) unless user
+
               following_user = current_user.following_users.find_by(follower_id: params[:user_id])
               error!({ user: ['already followed'] }, 406) if following_user
 
@@ -37,10 +41,11 @@ module Margatsni
 
           namespace :followers do
             get do
-              followers = User.find_by(id: params[:user_id]).followers
+              public_endpoint_authentication
+              followers = User.find_by(id: params[:user_id])&.followers
               not_found!(key: :user) unless followers
 
-              present followers, with: Margatsni::V1::Entities::User
+              present followers, with: Margatsni::V1::Entities::User, user: current_user
             end
           end
         end
