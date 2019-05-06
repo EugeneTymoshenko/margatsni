@@ -29,6 +29,7 @@ gem 'carrierwave-dropbox'
 gem 'mini_racer'
 gem 'trestle-auth'
 gem 'trestle-search'
+gem 'fog-aws'
 
 group :development do
   gem 'annotate'
