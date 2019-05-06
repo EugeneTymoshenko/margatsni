@@ -30,16 +30,33 @@ module Margatsni
         end
 
         namespace :posts do
-          desc 'Return list of post with choosen hashtag'
-          params do
-            optional :page, type: Integer
-            optional :per_page, type: Integer
-          end
-          get 'tags/:tag_name' do
-            find_tag!
-            posts = tag.posts.page(params[:page]).per(params[:per_page])
+          namespace :tags do
+            desc 'return list of tags'
+            params do
+              optional :page, type: Integer
+              optional :per_page, type: Integer
+              optional :name_query, type: String
+            end
+            get do
+              tags = Tag.search_by_name(params[:name_query]).page(params[:page]).per(params[:per_page])
 
-            represent_posts(posts)
+              present :total_pages, tags.total_pages
+              present :page, tags.current_page
+              present :per_page, tags.current_per_page
+              present :tags, tags, with: Margatsni::V1::Entities::Tag
+            end
+
+            desc 'Return list of post with choosen hashtag'
+            params do
+              optional :page, type: Integer
+              optional :per_page, type: Integer
+            end
+            get ':tag_name' do
+              find_tag!
+              posts = tag.posts.page(params[:page]).per(params[:per_page])
+
+              represent_posts(posts)
+            end
           end
 
           desc 'Return list of posts'
@@ -88,10 +105,6 @@ module Margatsni
             represent_post(post)
           end
 
-          before do
-            authenticate_request!
-          end
-
           desc 'Create new post'
           params do
             requires :body, type: String, length: 500
@@ -100,6 +113,7 @@ module Margatsni
             end
           end
           post do
+            authenticate_request!
             post = current_user.posts.build(declared(params, include_missing: false))
             error!(post.errors.messages, 422) unless post.save
 
@@ -112,6 +126,7 @@ module Margatsni
               requires :body, type: String, length: 500
             end
             put do
+              authenticate_request!
               post = current_user.posts.find_by(id: params[:post_id])
               not_found!(key: :post) unless post
               error!(post.errors.messages, 422) unless post.update(declared(params))
@@ -121,6 +136,7 @@ module Margatsni
 
             desc 'Delete a post'
             delete do
+              authenticate_request!
               post = current_user.posts.find_by(id: params[:post_id])
               not_found!(key: :post) unless post
 
