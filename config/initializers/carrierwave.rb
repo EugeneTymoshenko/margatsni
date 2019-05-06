@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
 CarrierWave.configure do |config|
-  config.dropbox_access_token = ENV['DROPBOX_ACCESS_TOKEN']
+  config.fog_provider = 'fog/aws'
+  config.fog_credentials = {
+    provider:              'AWS',
+    aws_access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+    region:                'eu-central-1'
+  }
+  config.fog_directory  = 'margatsni'
+  config.fog_public     = false
 end
