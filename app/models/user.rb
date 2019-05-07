@@ -14,7 +14,7 @@ class User < ApplicationRecord
   has_many :followers, through: :follower_users, source: :user, class_name: 'User'
   has_many :following, through: :following_users, source: :follower, class_name: 'User'
 
-  scope :search_by_username, -> (query) { where('username ILIKE ?', "%#{query}%").order(username: :asc) }
+  scope :search_by_username, ->(query) { where('username LIKE ?', "%#{query}%").order(username: :asc) }
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }, on: :create
@@ -26,9 +26,11 @@ class User < ApplicationRecord
   before_create :build_role, on: :create, unless: :role
   before_create :confirmation_token
 
+  after_create :email_activate
+
   def email_activate
     self.email_confirmed = true
-    self.confirm_token = nil
+    # self.confirm_token = nil
     save
   end
 
