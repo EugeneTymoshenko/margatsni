@@ -16,17 +16,17 @@ module Margatsni
         end
 
         namespace :users do
-          desc 'confirm email'
-          params do
-            requires :token, type: String, allow_blank: false
-          end
-          post :confirm_email do
-            user = User.find_by(confirm_token: params[:token])
-            error!({ token: 'does not exist!' }, 404) unless user
-            user.email_activate
-
-            represent_user_with_token(user)
-          end
+          # desc 'confirm email'
+          # params do
+          #   requires :token, type: String, allow_blank: false
+          # end
+          # post :confirm_email do
+          #   user = User.find_by(confirm_token: params[:token])
+          #   error!({ token: 'does not exist!' }, 404) unless user
+          #   user.email_activate
+          #
+          #   represent_user_with_token(user)
+          # end
 
           desc 'register a user'
           params do
@@ -39,7 +39,7 @@ module Margatsni
           end
           post do
             user = User.new(declared(params, include_missing: false))
-            UserMailer.with(user: user).registration_confirmation.deliver_now if user.save
+            MailSenderWorker.perform_async(user.username, user.email) if user.save
             error!(user.errors.messages, 406) unless user.save
 
             represent_user(user.reload)
